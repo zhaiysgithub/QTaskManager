@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="E:\GitWork\QTaskManager\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.2.1\jars\libs\internal_impl-23.2.1.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="607a3d0b8013b4ccbfeb0b7cb293351994e021fb">
+        <dex dex="E:\GitWork\QTaskManager\app\build\intermediates\pre-dexed\debug\internal_impl-23.2.1_61f9bb5222da0a4a5db3e72de6516c00a78cdcd5.jar" />
+    </item>
+    <item
+        jar="E:\Program Files\Android\android-sdk\extras\android\m2repository\com\android\support\support-annotations\23.2.1\support-annotations-23.2.1.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="ccb693bc0774fcb637246f7360de25b4af7df318">
+        <dex dex="E:\GitWork\QTaskManager\app\build\intermediates\pre-dexed\debug\support-annotations-23.2.1_7a101b9d67623106c12b3657160a0806a7ab07cd.jar" />
+    </item>
+    <item
+        jar="E:\GitWork\QTaskManager\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.2.1\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="e4d0cbb0b999604b349062f0214a0a228a7fd151">
+        <dex dex="E:\GitWork\QTaskManager\app\build\intermediates\pre-dexed\debug\com.android.support-appcompat-v7-23.2.1_7e262fd3849fe9e5cc894a0df302c7539fe00b7d.jar" />
+    </item>
+    <item
+        jar="E:\GitWork\QTaskManager\app\build\intermediates\exploded-aar\QTaskManager\qtaskmanager\unspecified\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="24b18d27e6a09f66deca3fdaaf6011ed06d43f62">
+        <dex dex="E:\GitWork\QTaskManager\app\build\intermediates\pre-dexed\debug\QTaskManager-qtaskmanager-unspecified_f054d73652276aa1f9078ac38d777f3c543e54ed.jar" />
+    </item>
+    <item
+        jar="E:\GitWork\QTaskManager\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\23.2.1\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="673d77a5bbddd766037f088e775df525c46407f0">
+        <dex dex="E:\GitWork\QTaskManager\app\build\intermediates\pre-dexed\debug\com.android.support-support-vector-drawable-23.2.1_5e8f8754ffc769582d0c62e5de84a6125491ad7a.jar" />
+    </item>
+    <item
+        jar="E:\GitWork\QTaskManager\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\23.2.1\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="3469cb457f10f74c28cbc05f069b6c894f6cbdd0">
+        <dex dex="E:\GitWork\QTaskManager\app\build\intermediates\pre-dexed\debug\com.android.support-animated-vector-drawable-23.2.1_c326824101d437b5ce1a6b8d19667d8310c47fd4.jar" />
+    </item>
+    <item
+        jar="E:\GitWork\QTaskManager\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.2.1\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="3be474b1b21b31cf2fa93fe6bd641ae108d96452">
+        <dex dex="E:\GitWork\QTaskManager\app\build\intermediates\pre-dexed\debug\com.android.support-support-v4-23.2.1_bae72dac90ff2b11c186ce04e4bb6ed0315ec2bc.jar" />
+    </item>
+
+</items>
