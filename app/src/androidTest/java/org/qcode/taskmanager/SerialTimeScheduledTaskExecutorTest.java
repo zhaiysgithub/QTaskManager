@@ -2,9 +2,8 @@ package org.qcode.taskmanager;
 
 import android.test.AndroidTestCase;
 
-import org.qcode.qtaskmodule.SerialTaskExecutorHelper;
-import org.qcode.qtaskmodule.taskexecutor.ITaskExecutor;
-import org.qcode.qtaskmodule.utils.Logging;
+import org.qcode.taskmanager.taskexecutor.impl.SerialTaskExecutorImpl;
+import org.qcode.taskmanager.base.utils.Logging;
 import org.qcode.taskmanager.model.ExecuteResult;
 import org.qcode.taskmanager.model.ExecuteTask;
 
@@ -30,35 +29,35 @@ public class SerialTimeScheduledTaskExecutorTest extends AndroidTestCase {
 
     private Object mLock = new Object();
 
-    private SerialTaskExecutorHelper<ExecuteTask> mSerialTaskExecutorHelper;
+    private SerialTaskExecutorImpl<ExecuteTask> mSerialTaskExecutorHelper;
 
     public void testSimpleTimeScheduledTaskExecutor() throws InterruptedException {
         idSequenceList.clear();
         resultIndex = -1;
 
-        mSerialTaskExecutorHelper = new SerialTaskExecutorHelper<ExecuteTask>();
+        mSerialTaskExecutorHelper = new SerialTaskExecutorImpl<ExecuteTask>();
 
-        mSerialTaskExecutorHelper.setTaskExecutor(taskExecutorTimeScheduled);
+        mSerialTaskExecutorHelper.setTaskExecutorAbility(taskExecutorTimeScheduled);
 
-        mSerialTaskExecutorHelper.addTaskDelayed(new ExecuteTask(1), 200);
+        mSerialTaskExecutorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(1), 200);
         idSequenceList.add(new ExecuteResult(1, 200, System.currentTimeMillis()));
 
-        mSerialTaskExecutorHelper.addTaskDelayed(new ExecuteTask(2), 400);
+        mSerialTaskExecutorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(2), 400);
         idSequenceList.add(new ExecuteResult(2, 400, System.currentTimeMillis()));
 
-        mSerialTaskExecutorHelper.addTaskDelayed(new ExecuteTask(3), 600);
+        mSerialTaskExecutorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(3), 600);
         idSequenceList.add(new ExecuteResult(3, 600, System.currentTimeMillis()));
 
-        mSerialTaskExecutorHelper.addTaskDelayed(new ExecuteTask(4), 900);
+        mSerialTaskExecutorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(4), 900);
         idSequenceList.add(new ExecuteResult(4, 900, System.currentTimeMillis()));
 
-        mSerialTaskExecutorHelper.addTaskDelayed(new ExecuteTask(5), 1100);
+        mSerialTaskExecutorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(5), 1100);
         idSequenceList.add(new ExecuteResult(5, 1100, System.currentTimeMillis()));
 
-        mSerialTaskExecutorHelper.addTaskDelayed(new ExecuteTask(8), 3000);
+        mSerialTaskExecutorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(8), 3000);
         idSequenceList.add(new ExecuteResult(8, 3000, System.currentTimeMillis()));
 
-        mSerialTaskExecutorHelper.addTaskDelayed(new ExecuteTask(9), 400);
+        mSerialTaskExecutorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(9), 400);
         idSequenceList.add(new ExecuteResult(9, 400, System.currentTimeMillis()));
 
         mSerialTaskExecutorHelper.startExecute();
@@ -72,9 +71,9 @@ public class SerialTimeScheduledTaskExecutorTest extends AndroidTestCase {
         idSequenceList.clear();
         resultIndex = -1;
 
-        mSerialTaskExecutorHelper = new SerialTaskExecutorHelper<ExecuteTask>();
+        mSerialTaskExecutorHelper = new SerialTaskExecutorImpl<ExecuteTask>();
 
-        mSerialTaskExecutorHelper.setTaskExecutor(taskExecutorTimeScheduled);
+        mSerialTaskExecutorHelper.setTaskExecutorAbility(taskExecutorTimeScheduled);
 
         //必须保证id不相等，否则后面的自动判断逻辑会出错
         Random random = new Random();
@@ -86,7 +85,7 @@ public class SerialTimeScheduledTaskExecutorTest extends AndroidTestCase {
                 delay = random.nextInt(1000);
             } while (idSequenceList.contains(new ExecuteResult(id)));
 
-            mSerialTaskExecutorHelper.addTaskDelayed(new ExecuteTask(id), delay);
+            mSerialTaskExecutorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(id), delay);
             idSequenceList.add(new ExecuteResult(id, delay, System.currentTimeMillis()));
         }
 
@@ -98,9 +97,9 @@ public class SerialTimeScheduledTaskExecutorTest extends AndroidTestCase {
     }
 
     private ExecuteTask mCurrentTask = null;
-    ITaskExecutor<ExecuteTask> taskExecutorTimeScheduled = new ITaskExecutor<ExecuteTask>() {
+    ITaskExecutorAbility<ExecuteTask> taskExecutorTimeScheduled = new ITaskExecutorAbility<ExecuteTask>() {
         @Override
-        public boolean needRemove(ExecuteTask existedTask, ExecuteTask newAddTask) {
+        public boolean isSame(ExecuteTask existedTask, ExecuteTask newAddTask) {
             return existedTask.id == newAddTask.id;
         }
 

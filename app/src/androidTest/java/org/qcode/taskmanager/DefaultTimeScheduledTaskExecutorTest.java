@@ -2,9 +2,8 @@ package org.qcode.taskmanager;
 
 import android.test.AndroidTestCase;
 
-import org.qcode.qtaskmodule.DefaultTaskExecutorHelper;
-import org.qcode.qtaskmodule.taskexecutor.ITaskExecutor;
-import org.qcode.qtaskmodule.utils.Logging;
+import org.qcode.taskmanager.taskexecutor.impl.DefaultTaskExecutorImpl;
+import org.qcode.taskmanager.base.utils.Logging;
 import org.qcode.taskmanager.model.ExecuteResult;
 import org.qcode.taskmanager.model.ExecuteTask;
 
@@ -30,35 +29,35 @@ public class DefaultTimeScheduledTaskExecutorTest extends AndroidTestCase {
 
     private Object mLock = new Object();
 
-    private DefaultTaskExecutorHelper<ExecuteTask> mDefaultTaskExecutorHelper;
+    private DefaultTaskExecutorImpl<ExecuteTask> mDefaultTaskExecutorHelper;
 
     public void testSimpleTimeScheduledTaskExecutor() throws InterruptedException {
         idSequenceList.clear();
         resultIndex = -1;
 
-        mDefaultTaskExecutorHelper = new DefaultTaskExecutorHelper<ExecuteTask>();
+        mDefaultTaskExecutorHelper = new DefaultTaskExecutorImpl<ExecuteTask>();
 
-        mDefaultTaskExecutorHelper.setTaskExecutor(taskExecutorTimeScheduled);
+        mDefaultTaskExecutorHelper.setTaskExecutorAbility(taskExecutorTimeScheduled);
 
-        mDefaultTaskExecutorHelper.addTaskDelayed(new ExecuteTask(1), 200);
+        mDefaultTaskExecutorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(1), 200);
         idSequenceList.add(new ExecuteResult(1, 200, System.currentTimeMillis()));
 
-        mDefaultTaskExecutorHelper.addTaskDelayed(new ExecuteTask(2), 400);
+        mDefaultTaskExecutorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(2), 400);
         idSequenceList.add(new ExecuteResult(2, 400, System.currentTimeMillis()));
 
-        mDefaultTaskExecutorHelper.addTaskDelayed(new ExecuteTask(3), 600);
+        mDefaultTaskExecutorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(3), 600);
         idSequenceList.add(new ExecuteResult(3, 600, System.currentTimeMillis()));
 
-        mDefaultTaskExecutorHelper.addTaskDelayed(new ExecuteTask(4), 900);
+        mDefaultTaskExecutorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(4), 900);
         idSequenceList.add(new ExecuteResult(4, 900, System.currentTimeMillis()));
 
-        mDefaultTaskExecutorHelper.addTaskDelayed(new ExecuteTask(5), 1100);
+        mDefaultTaskExecutorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(5), 1100);
         idSequenceList.add(new ExecuteResult(5, 1100, System.currentTimeMillis()));
 
-        mDefaultTaskExecutorHelper.addTaskDelayed(new ExecuteTask(8), 3000);
+        mDefaultTaskExecutorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(8), 3000);
         idSequenceList.add(new ExecuteResult(8, 3000, System.currentTimeMillis()));
 
-        mDefaultTaskExecutorHelper.addTaskDelayed(new ExecuteTask(9), 400);
+        mDefaultTaskExecutorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(9), 400);
         idSequenceList.add(new ExecuteResult(9, 400, System.currentTimeMillis()));
 
         mDefaultTaskExecutorHelper.startExecute();
@@ -72,9 +71,9 @@ public class DefaultTimeScheduledTaskExecutorTest extends AndroidTestCase {
         idSequenceList.clear();
         resultIndex = -1;
 
-        mDefaultTaskExecutorHelper = new DefaultTaskExecutorHelper<>();
+        mDefaultTaskExecutorHelper = new DefaultTaskExecutorImpl<>();
 
-        mDefaultTaskExecutorHelper.setTaskExecutor(taskExecutorTimeScheduled);
+        mDefaultTaskExecutorHelper.setTaskExecutorAbility(taskExecutorTimeScheduled);
 
         //必须保证id不相等，否则后面的自动判断逻辑会出错
         Random random = new Random();
@@ -86,7 +85,7 @@ public class DefaultTimeScheduledTaskExecutorTest extends AndroidTestCase {
                 delay = random.nextInt(1000);
             } while (idSequenceList.contains(new ExecuteResult(id)));
 
-            mDefaultTaskExecutorHelper.addTaskDelayed(new ExecuteTask(id), delay);
+            mDefaultTaskExecutorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(id), delay);
             idSequenceList.add(new ExecuteResult(id, delay, System.currentTimeMillis()));
         }
 
@@ -98,9 +97,10 @@ public class DefaultTimeScheduledTaskExecutorTest extends AndroidTestCase {
     }
 
     private ExecuteTask mCurrentTask = null;
-    ITaskExecutor<ExecuteTask> taskExecutorTimeScheduled = new ITaskExecutor<ExecuteTask>() {
+    ITaskExecutorAbility<ExecuteTask> taskExecutorTimeScheduled = new ITaskExecutorAbility<ExecuteTask>() {
+
         @Override
-        public boolean needRemove(ExecuteTask existedTask, ExecuteTask newAddTask) {
+        public boolean isSame(ExecuteTask existedTask, ExecuteTask newAddTask) {
             return existedTask.id == newAddTask.id;
         }
 

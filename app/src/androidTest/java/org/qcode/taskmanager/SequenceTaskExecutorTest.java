@@ -2,9 +2,8 @@ package org.qcode.taskmanager;
 
 import android.test.AndroidTestCase;
 
-import org.qcode.qtaskmodule.SequenceTaskExecutorHelper;
-import org.qcode.qtaskmodule.taskexecutor.ITaskExecutor;
-import org.qcode.qtaskmodule.utils.Logging;
+import org.qcode.taskmanager.taskexecutor.impl.SequenceTaskExecutorImpl;
+import org.qcode.taskmanager.base.utils.Logging;
 import org.qcode.taskmanager.model.ExecuteResult;
 import org.qcode.taskmanager.model.ExecuteTask;
 
@@ -36,52 +35,52 @@ public class SequenceTaskExecutorTest extends AndroidTestCase {
         executeResultList.clear();
         hasFirstTaskRuned = false;
 
-        SequenceTaskExecutorHelper<ExecuteTask> executorHelper = new SequenceTaskExecutorHelper<ExecuteTask>();
+        SequenceTaskExecutorImpl<ExecuteTask> executorHelper = new SequenceTaskExecutorImpl<ExecuteTask>();
 
-        executorHelper.setTaskExecutor(taskExecutorSequent);
+        executorHelper.setTaskExecutorAbility(taskExecutorSequent);
 
-        executorHelper.addTask(new ExecuteTask(1));
+        executorHelper.getTaskManager().addTask(new ExecuteTask(1));
         idSequenceList.add(new ExecuteResult(1));
 
-        executorHelper.addTask(new ExecuteTask(2));
+        executorHelper.getTaskManager().addTask(new ExecuteTask(2));
         idSequenceList.add(new ExecuteResult(2, ExecuteResult.EXECUTE_END, 1));
 
-        executorHelper.addTask(new ExecuteTask(3));
+        executorHelper.getTaskManager().addTask(new ExecuteTask(3));
         idSequenceList.add(new ExecuteResult(3, ExecuteResult.EXECUTE_END, 2));
 
-        executorHelper.addTask(new ExecuteTask(4));
+        executorHelper.getTaskManager().addTask(new ExecuteTask(4));
         idSequenceList.add(new ExecuteResult(4, ExecuteResult.EXECUTE_END, 3));
 
-        executorHelper.addTask(new ExecuteTask(5));
+        executorHelper.getTaskManager().addTask(new ExecuteTask(5));
         idSequenceList.add(new ExecuteResult(5, ExecuteResult.EXECUTE_END, 4));
 
-        executorHelper.addTaskBeforeAnchor(new ExecuteTask(6), new ExecuteTask(1));
+        executorHelper.getTaskManager().addTaskBeforeAnchor(new ExecuteTask(6), new ExecuteTask(1));
         idSequenceList.add(searchIndexForId(1, true), new ExecuteResult(6, ExecuteResult.EXECUTE_BEFORE, 1));
 
         //id 9不存在
-        executorHelper.addTaskAfterAnchor(new ExecuteTask(7), new ExecuteTask(9));
+        executorHelper.getTaskManager().addTaskAfterAnchor(new ExecuteTask(7), new ExecuteTask(9));
         idSequenceList.add(searchIndexForId(9, false), new ExecuteResult(7, ExecuteResult.EXECUTE_END, 5));
 
-        executorHelper.addTask(new ExecuteTask(2));
+        executorHelper.getTaskManager().addTask(new ExecuteTask(2));
         idSequenceList.add(new ExecuteResult(2, ExecuteResult.EXECUTE_END, 7));
 
-        executorHelper.addTask(new ExecuteTask(-1));
+        executorHelper.getTaskManager().addTask(new ExecuteTask(-1));
         idSequenceList.add(new ExecuteResult(-1, ExecuteResult.EXECUTE_END, 2));
 
         //id 100不存在
-        executorHelper.addTaskBeforeAnchor(new ExecuteTask(8), new ExecuteTask(100));
+        executorHelper.getTaskManager().addTaskBeforeAnchor(new ExecuteTask(8), new ExecuteTask(100));
         idSequenceList.add(searchIndexForId(100, true), new ExecuteResult(8, ExecuteResult.EXECUTE_END, -1));
 
-        executorHelper.addTaskBeforeAnchor(new ExecuteTask(9), new ExecuteTask(8));
+        executorHelper.getTaskManager().addTaskBeforeAnchor(new ExecuteTask(9), new ExecuteTask(8));
         idSequenceList.add(searchIndexForId(8, true), new ExecuteResult(9, ExecuteResult.EXECUTE_BEFORE, 8));
 
-        executorHelper.addTaskAfterAnchor(new ExecuteTask(10), new ExecuteTask(8));
+        executorHelper.getTaskManager().addTaskAfterAnchor(new ExecuteTask(10), new ExecuteTask(8));
         idSequenceList.add(searchIndexForId(8, false), new ExecuteResult(10, ExecuteResult.EXECUTE_END, 8));
 
-        executorHelper.addTaskBeforeAnchor(new ExecuteTask(11), new ExecuteTask(2));
+        executorHelper.getTaskManager().addTaskBeforeAnchor(new ExecuteTask(11), new ExecuteTask(2));
         idSequenceList.add(searchIndexForId(2, true), new ExecuteResult(11, ExecuteResult.EXECUTE_BEFORE, 2));
 
-        executorHelper.addTaskAfterAnchor(new ExecuteTask(12), new ExecuteTask(2));
+        executorHelper.getTaskManager().addTaskAfterAnchor(new ExecuteTask(12), new ExecuteTask(2));
         idSequenceList.add(searchIndexForId(2, false), new ExecuteResult(12, ExecuteResult.EXECUTE_END, 2));
 
         executorHelper.startExecute();
@@ -99,9 +98,9 @@ public class SequenceTaskExecutorTest extends AndroidTestCase {
 
         hasFirstTaskRuned = false;
 
-        SequenceTaskExecutorHelper<ExecuteTask> executorHelper = new SequenceTaskExecutorHelper<ExecuteTask>();
+        SequenceTaskExecutorImpl<ExecuteTask> executorHelper = new SequenceTaskExecutorImpl<ExecuteTask>();
 
-        executorHelper.setTaskExecutor(taskExecutorSequent);
+        executorHelper.setTaskExecutorAbility(taskExecutorSequent);
 
         //必须保证id不相等，否则后面的自动判断逻辑会出错
         Random random = new Random();
@@ -115,14 +114,14 @@ public class SequenceTaskExecutorTest extends AndroidTestCase {
             int addOperation = random.nextInt(5);
             if (mIsFirst) {
                 //第一次从列表内找不到参照物
-                executorHelper.addTask(new ExecuteTask(id));
+                executorHelper.getTaskManager().addTask(new ExecuteTask(id));
                 idSequenceList.add(new ExecuteResult(id));
                 mIsFirst = false;
                 continue;
             }
 
             if (addOperation == 0) { //顺序添加任务
-                executorHelper.addTask(new ExecuteTask(id));
+                executorHelper.getTaskManager().addTask(new ExecuteTask(id));
                 idSequenceList.add(new ExecuteResult(id,
                         ExecuteResult.EXECUTE_END,
                         idSequenceList.get(idSequenceList.size() - 1).id));
@@ -130,7 +129,7 @@ public class SequenceTaskExecutorTest extends AndroidTestCase {
             } else if (addOperation == 1) { //在某个存在的任务之前添加任务
                 int anchorId = idSequenceList.get(random.nextInt(idSequenceList.size())).id;
 
-                executorHelper.addTaskBeforeAnchor(new ExecuteTask(id), new ExecuteTask(anchorId));
+                executorHelper.getTaskManager().addTaskBeforeAnchor(new ExecuteTask(id), new ExecuteTask(anchorId));
                 idSequenceList.add(searchIndexForId(anchorId, true),
                         new ExecuteResult(id,
                                 ExecuteResult.EXECUTE_BEFORE,
@@ -138,7 +137,7 @@ public class SequenceTaskExecutorTest extends AndroidTestCase {
             } else if (addOperation == 2) { //在某个存在的任务之后添加任务
                 int anchorId = idSequenceList.get(random.nextInt(idSequenceList.size())).id;
 
-                executorHelper.addTaskAfterAnchor(new ExecuteTask(id), new ExecuteTask(anchorId));
+                executorHelper.getTaskManager().addTaskAfterAnchor(new ExecuteTask(id), new ExecuteTask(anchorId));
                 int insertIndex = searchIndexForId(anchorId, false);
                 Logging.d(TAG, "testRandom()| insertIndex= " + insertIndex
                         + " id = " + id + " anchorId= " + anchorId);
@@ -152,7 +151,7 @@ public class SequenceTaskExecutorTest extends AndroidTestCase {
 
                 id += TEST_EXECUTE_TIME * 10;
 
-                executorHelper.addTaskBeforeAnchor(new ExecuteTask(id), new ExecuteTask(anchorId));
+                executorHelper.getTaskManager().addTaskBeforeAnchor(new ExecuteTask(id), new ExecuteTask(anchorId));
                 idSequenceList.add(searchIndexForId(anchorId, true),
                         new ExecuteResult(id, ExecuteResult.EXECUTE_END,
                                 idSequenceList.get(idSequenceList.size() - 1).id));
@@ -164,7 +163,7 @@ public class SequenceTaskExecutorTest extends AndroidTestCase {
 
                 id += TEST_EXECUTE_TIME * 10 * 2;
 
-                executorHelper.addTaskAfterAnchor(new ExecuteTask(id), new ExecuteTask(anchorId));
+                executorHelper.getTaskManager().addTaskAfterAnchor(new ExecuteTask(id), new ExecuteTask(anchorId));
                 idSequenceList.add(searchIndexForId(anchorId, false),
                         new ExecuteResult(id, ExecuteResult.EXECUTE_END,
                                 idSequenceList.get(idSequenceList.size() - 1).id));
@@ -204,9 +203,9 @@ public class SequenceTaskExecutorTest extends AndroidTestCase {
 
     private Object mLock = new Object();
 
-    ITaskExecutor<ExecuteTask> taskExecutorSequent = new ITaskExecutor<ExecuteTask>() {
+    ITaskExecutorAbility<ExecuteTask> taskExecutorSequent = new ITaskExecutorAbility<ExecuteTask>() {
         @Override
-        public boolean needRemove(ExecuteTask existedTask, ExecuteTask newAddTask) {
+        public boolean isSame(ExecuteTask existedTask, ExecuteTask newAddTask) {
             return existedTask.id == newAddTask.id;
         }
 

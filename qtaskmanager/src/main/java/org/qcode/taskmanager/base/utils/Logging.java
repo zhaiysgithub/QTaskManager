@@ -1,4 +1,4 @@
-package org.qcode.qtaskmodule.utils;
+package org.qcode.taskmanager.base.utils;
 
 import android.util.Log;
 

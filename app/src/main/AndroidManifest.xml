@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.qcode.qtaskmodule.test">
+    package="org.qcode.taskmanager.test">
 
     <application
         android:allowBackup="true"

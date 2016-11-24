@@ -2,9 +2,8 @@ package org.qcode.taskmanager;
 
 import android.test.AndroidTestCase;
 
-import org.qcode.qtaskmodule.SequenceTaskExecutorHelper;
-import org.qcode.qtaskmodule.taskexecutor.ITaskExecutor;
-import org.qcode.qtaskmodule.utils.Logging;
+import org.qcode.taskmanager.taskexecutor.impl.SequenceTaskExecutorImpl;
+import org.qcode.taskmanager.base.utils.Logging;
 import org.qcode.taskmanager.model.ExecuteResult;
 import org.qcode.taskmanager.model.ExecuteTask;
 
@@ -34,29 +33,29 @@ public class TimeScheduledTaskExecutorTest extends AndroidTestCase {
         idSequenceList.clear();
         resultIndex = -1;
 
-        SequenceTaskExecutorHelper<ExecuteTask> executorHelper = new SequenceTaskExecutorHelper<ExecuteTask>();
+        SequenceTaskExecutorImpl<ExecuteTask> executorHelper = new SequenceTaskExecutorImpl<ExecuteTask>();
 
-        executorHelper.setTaskExecutor(taskExecutorTimeScheduled);
+        executorHelper.setTaskExecutorAbility(taskExecutorTimeScheduled);
 
-        executorHelper.addTaskDelayed(new ExecuteTask(1), 200);
+        executorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(1), 200);
         idSequenceList.add(new ExecuteResult(1, 200, System.currentTimeMillis()));
 
-        executorHelper.addTaskDelayed(new ExecuteTask(2), 400);
+        executorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(2), 400);
         idSequenceList.add(new ExecuteResult(2, 400, System.currentTimeMillis()));
 
-        executorHelper.addTaskDelayed(new ExecuteTask(3), 600);
+        executorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(3), 600);
         idSequenceList.add(new ExecuteResult(3, 600, System.currentTimeMillis()));
 
-        executorHelper.addTaskDelayed(new ExecuteTask(4), 900);
+        executorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(4), 900);
         idSequenceList.add(new ExecuteResult(4, 900, System.currentTimeMillis()));
 
-        executorHelper.addTaskDelayed(new ExecuteTask(5), 1100);
+        executorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(5), 1100);
         idSequenceList.add(new ExecuteResult(5, 1100, System.currentTimeMillis()));
 
-        executorHelper.addTaskDelayed(new ExecuteTask(8), 3000);
+        executorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(8), 3000);
         idSequenceList.add(new ExecuteResult(8, 3000, System.currentTimeMillis()));
 
-        executorHelper.addTaskDelayed(new ExecuteTask(9), 400);
+        executorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(9), 400);
         idSequenceList.add(new ExecuteResult(9, 400, System.currentTimeMillis()));
 
         executorHelper.startExecute();
@@ -70,9 +69,9 @@ public class TimeScheduledTaskExecutorTest extends AndroidTestCase {
         idSequenceList.clear();
         resultIndex = -1;
 
-        SequenceTaskExecutorHelper<ExecuteTask> executorHelper = new SequenceTaskExecutorHelper<ExecuteTask>();
+        SequenceTaskExecutorImpl<ExecuteTask> executorHelper = new SequenceTaskExecutorImpl<ExecuteTask>();
 
-        executorHelper.setTaskExecutor(taskExecutorTimeScheduled);
+        executorHelper.setTaskExecutorAbility(taskExecutorTimeScheduled);
 
         //必须保证id不相等，否则后面的自动判断逻辑会出错
         Random random = new Random();
@@ -84,7 +83,7 @@ public class TimeScheduledTaskExecutorTest extends AndroidTestCase {
                 delay = random.nextInt(10000);
             } while (idSequenceList.contains(new ExecuteResult(id)));
 
-            executorHelper.addTaskDelayed(new ExecuteTask(id), delay);
+            executorHelper.getTaskManager().addTaskDelayed(new ExecuteTask(id), delay);
             idSequenceList.add(new ExecuteResult(id, delay, System.currentTimeMillis()));
         }
 
@@ -95,9 +94,9 @@ public class TimeScheduledTaskExecutorTest extends AndroidTestCase {
         }
     }
 
-    ITaskExecutor<ExecuteTask> taskExecutorTimeScheduled = new ITaskExecutor<ExecuteTask>() {
+    ITaskExecutorAbility<ExecuteTask> taskExecutorTimeScheduled = new ITaskExecutorAbility<ExecuteTask>() {
         @Override
-        public boolean needRemove(ExecuteTask existedTask, ExecuteTask newAddTask) {
+        public boolean isSame(ExecuteTask existedTask, ExecuteTask newAddTask) {
             return existedTask.id == newAddTask.id;
         }
 
