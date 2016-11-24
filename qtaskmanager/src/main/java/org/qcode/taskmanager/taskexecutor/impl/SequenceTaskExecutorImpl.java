@@ -19,4 +19,16 @@ public class SequenceTaskExecutorImpl<T> extends AbsTaskExecutor<T> {
             mTaskExecutorHelper.executeTask(task.getTask());
         }
     }
+
+    @Override
+    public void notifyTaskBegin(T task) {
+        // do nothing
+        // in this case, we don't care the state of other task
+    }
+
+    @Override
+    public void notifyTaskFinish(T task) {
+        // do nothing
+        // in this case, we don't care the state of other task
+    }
 }

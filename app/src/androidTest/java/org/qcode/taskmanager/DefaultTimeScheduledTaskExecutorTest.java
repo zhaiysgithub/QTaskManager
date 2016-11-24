@@ -2,7 +2,6 @@ package org.qcode.taskmanager;
 
 import android.test.AndroidTestCase;
 
-import org.qcode.taskmanager.taskexecutor.impl.DefaultTaskExecutorImpl;
 import org.qcode.taskmanager.base.utils.Logging;
 import org.qcode.taskmanager.model.ExecuteResult;
 import org.qcode.taskmanager.model.ExecuteTask;
@@ -29,13 +28,13 @@ public class DefaultTimeScheduledTaskExecutorTest extends AndroidTestCase {
 
     private Object mLock = new Object();
 
-    private DefaultTaskExecutorImpl<ExecuteTask> mDefaultTaskExecutorHelper;
+    private ITaskExecutor<ExecuteTask> mDefaultTaskExecutorHelper;
 
     public void testSimpleTimeScheduledTaskExecutor() throws InterruptedException {
         idSequenceList.clear();
         resultIndex = -1;
 
-        mDefaultTaskExecutorHelper = new DefaultTaskExecutorImpl<ExecuteTask>();
+        mDefaultTaskExecutorHelper = TaskExecutorFactory.createDefaultTaskExecutor();
 
         mDefaultTaskExecutorHelper.setTaskExecutorAbility(taskExecutorTimeScheduled);
 
@@ -71,7 +70,7 @@ public class DefaultTimeScheduledTaskExecutorTest extends AndroidTestCase {
         idSequenceList.clear();
         resultIndex = -1;
 
-        mDefaultTaskExecutorHelper = new DefaultTaskExecutorImpl<>();
+        mDefaultTaskExecutorHelper = TaskExecutorFactory.createDefaultTaskExecutor();
 
         mDefaultTaskExecutorHelper.setTaskExecutorAbility(taskExecutorTimeScheduled);
 

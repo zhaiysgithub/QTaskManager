@@ -39,4 +39,16 @@ public interface ITaskExecutor<T> {
      * @return
      */
     ITaskManager<T> getTaskManager();
+
+    /***
+     * 通知某个任务开始执行
+     * @param task
+     */
+    void notifyTaskBegin(T task);
+
+    /***
+     * 通知某个任务执行完成
+     * @param task
+     */
+    void notifyTaskFinish(T task);
 }

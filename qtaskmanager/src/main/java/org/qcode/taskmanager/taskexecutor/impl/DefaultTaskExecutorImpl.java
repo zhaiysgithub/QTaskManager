@@ -1,11 +1,10 @@
 package org.qcode.taskmanager.taskexecutor.impl;
 
-import org.qcode.taskmanager.ISerialTaskExecutor;
 import org.qcode.taskmanager.base.utils.Logging;
 import org.qcode.taskmanager.base.utils.Utils;
 import org.qcode.taskmanager.entities.TaskInfo;
-import org.qcode.taskmanager.taskpool.ITaskNodeChangeListener;
 import org.qcode.taskmanager.taskexecutor.AbsTaskExecutor;
+import org.qcode.taskmanager.taskpool.ITaskNodeChangeListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * qqliu
  * 2016/7/15.
  */
-public class DefaultTaskExecutorImpl<T> extends AbsTaskExecutor<T> implements ISerialTaskExecutor<T> {
+public class DefaultTaskExecutorImpl<T> extends AbsTaskExecutor<T> {
 
     private static final String TAG = "DefaultTaskExecutorImpl";
 

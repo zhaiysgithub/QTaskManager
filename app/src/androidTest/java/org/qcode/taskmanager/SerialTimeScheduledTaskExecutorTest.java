@@ -2,7 +2,6 @@ package org.qcode.taskmanager;
 
 import android.test.AndroidTestCase;
 
-import org.qcode.taskmanager.taskexecutor.impl.SerialTaskExecutorImpl;
 import org.qcode.taskmanager.base.utils.Logging;
 import org.qcode.taskmanager.model.ExecuteResult;
 import org.qcode.taskmanager.model.ExecuteTask;
@@ -29,13 +28,13 @@ public class SerialTimeScheduledTaskExecutorTest extends AndroidTestCase {
 
     private Object mLock = new Object();
 
-    private SerialTaskExecutorImpl<ExecuteTask> mSerialTaskExecutorHelper;
+    private ITaskExecutor<ExecuteTask> mSerialTaskExecutorHelper;
 
     public void testSimpleTimeScheduledTaskExecutor() throws InterruptedException {
         idSequenceList.clear();
         resultIndex = -1;
 
-        mSerialTaskExecutorHelper = new SerialTaskExecutorImpl<ExecuteTask>();
+        mSerialTaskExecutorHelper = TaskExecutorFactory.createSerialTaskExecutor();
 
         mSerialTaskExecutorHelper.setTaskExecutorAbility(taskExecutorTimeScheduled);
 
@@ -71,7 +70,7 @@ public class SerialTimeScheduledTaskExecutorTest extends AndroidTestCase {
         idSequenceList.clear();
         resultIndex = -1;
 
-        mSerialTaskExecutorHelper = new SerialTaskExecutorImpl<ExecuteTask>();
+        mSerialTaskExecutorHelper = TaskExecutorFactory.createSerialTaskExecutor();
 
         mSerialTaskExecutorHelper.setTaskExecutorAbility(taskExecutorTimeScheduled);
 

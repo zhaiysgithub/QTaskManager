@@ -1,6 +1,5 @@
 package org.qcode.taskmanager.taskexecutor.impl;
 
-import org.qcode.taskmanager.ISerialTaskExecutor;
 import org.qcode.taskmanager.base.utils.Utils;
 import org.qcode.taskmanager.entities.TaskInfo;
 import org.qcode.taskmanager.base.utils.Logging;
@@ -11,7 +10,7 @@ import org.qcode.taskmanager.taskexecutor.AbsTaskExecutor;
  * qqliu
  * 2016/7/15.
  */
-public class SerialTaskExecutorImpl<T> extends AbsTaskExecutor<T> implements ISerialTaskExecutor<T> {
+public class SerialTaskExecutorImpl<T> extends AbsTaskExecutor<T> {
 
     private static final String TAG = "SerialTaskExecutorImpl";
     //任务开始执行

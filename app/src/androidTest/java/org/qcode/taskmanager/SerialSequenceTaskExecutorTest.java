@@ -2,7 +2,6 @@ package org.qcode.taskmanager;
 
 import android.test.AndroidTestCase;
 
-import org.qcode.taskmanager.taskexecutor.impl.SerialTaskExecutorImpl;
 import org.qcode.taskmanager.base.utils.Logging;
 import org.qcode.taskmanager.model.ExecuteResult;
 import org.qcode.taskmanager.model.ExecuteTask;
@@ -28,7 +27,7 @@ public class SerialSequenceTaskExecutorTest extends AndroidTestCase {
     private boolean hasFirstTaskRuned = false;
 
     private int resultIndex = -1;
-    private SerialTaskExecutorImpl<ExecuteTask> mSerialTaskExecutorHelper;
+    private ITaskExecutor<ExecuteTask> mSerialTaskExecutorHelper;
 
     public void testSimpleSequenceTaskExecutor() throws InterruptedException {
         idSequenceList.clear();
@@ -36,7 +35,7 @@ public class SerialSequenceTaskExecutorTest extends AndroidTestCase {
         executeResultList.clear();
         hasFirstTaskRuned = false;
 
-        mSerialTaskExecutorHelper = new SerialTaskExecutorImpl<ExecuteTask>();
+        mSerialTaskExecutorHelper = TaskExecutorFactory.createSerialTaskExecutor();
 
         mSerialTaskExecutorHelper.setTaskExecutorAbility(taskExecutorSequent);
 
@@ -99,7 +98,7 @@ public class SerialSequenceTaskExecutorTest extends AndroidTestCase {
 
         hasFirstTaskRuned = false;
 
-        mSerialTaskExecutorHelper = new SerialTaskExecutorImpl<ExecuteTask>();
+        mSerialTaskExecutorHelper = TaskExecutorFactory.createSerialTaskExecutor();
 
         mSerialTaskExecutorHelper.setTaskExecutorAbility(taskExecutorSequent);
 

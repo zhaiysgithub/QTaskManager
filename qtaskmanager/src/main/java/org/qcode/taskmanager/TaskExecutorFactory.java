@@ -39,7 +39,7 @@ public class TaskExecutorFactory {
      * @param <T>
      * @return
      */
-    public static <T> ISerialTaskExecutor<T> createSerialTaskExecutor() {
+    public static <T> ITaskExecutor<T> createSerialTaskExecutor() {
         return new SerialTaskExecutorImpl<T>();
     }
 }

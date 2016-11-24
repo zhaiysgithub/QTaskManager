@@ -2,7 +2,6 @@ package org.qcode.taskmanager;
 
 import android.test.AndroidTestCase;
 
-import org.qcode.taskmanager.taskexecutor.impl.SequenceTaskExecutorImpl;
 import org.qcode.taskmanager.base.utils.Logging;
 import org.qcode.taskmanager.model.ExecuteResult;
 import org.qcode.taskmanager.model.ExecuteTask;
@@ -35,7 +34,7 @@ public class SequenceTaskExecutorTest extends AndroidTestCase {
         executeResultList.clear();
         hasFirstTaskRuned = false;
 
-        SequenceTaskExecutorImpl<ExecuteTask> executorHelper = new SequenceTaskExecutorImpl<ExecuteTask>();
+        ITaskExecutor<ExecuteTask> executorHelper = TaskExecutorFactory.createSequenceTaskExecutor();
 
         executorHelper.setTaskExecutorAbility(taskExecutorSequent);
 
@@ -98,7 +97,7 @@ public class SequenceTaskExecutorTest extends AndroidTestCase {
 
         hasFirstTaskRuned = false;
 
-        SequenceTaskExecutorImpl<ExecuteTask> executorHelper = new SequenceTaskExecutorImpl<ExecuteTask>();
+        ITaskExecutor<ExecuteTask> executorHelper = TaskExecutorFactory.createSequenceTaskExecutor();
 
         executorHelper.setTaskExecutorAbility(taskExecutorSequent);
 
