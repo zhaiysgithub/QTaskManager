@@ -1,7 +1,5 @@
 package org.qcode.taskmanager;
 
-import org.qcode.taskmanager.entities.DuplicateTaskStrategy;
-
 /**
  * 执行任务管理器，定义执行任务添加/删除等能力；
  * <p>
@@ -9,18 +7,6 @@ import org.qcode.taskmanager.entities.DuplicateTaskStrategy;
  * 2016/7/14.
  */
 public interface ITaskManager<T> {
-
-    /***
-     * 设置任务比较器
-     * @param comparator
-     */
-    void setTaskComparator(ITaskComparator<T> comparator);
-
-    /**
-     * 通知任务管理器遇到重复任务时的执行策略
-     * @param strategy
-     */
-    void setDuplicateTaskStrategy(DuplicateTaskStrategy strategy);
 
     /***
      * 向任务管理器内添加一个任务

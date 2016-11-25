@@ -1,6 +1,8 @@
 package org.qcode.taskmanager.taskpool;
 
+import org.qcode.taskmanager.ITaskComparator;
 import org.qcode.taskmanager.ITaskManager;
+import org.qcode.taskmanager.entities.DuplicateTaskStrategy;
 import org.qcode.taskmanager.entities.TaskInfo;
 
 /**
@@ -10,6 +12,18 @@ import org.qcode.taskmanager.entities.TaskInfo;
  * 2016/7/14.
  */
 public interface ITaskPool<T> extends ITaskManager<T> {
+
+    /***
+     * 设置任务比较器
+     * @param comparator
+     */
+    void setTaskComparator(ITaskComparator<T> comparator);
+
+    /**
+     * 通知任务管理器遇到重复任务时的执行策略
+     * @param strategy
+     */
+    void setDuplicateTaskStrategy(DuplicateTaskStrategy strategy);
 
     /***
      * 任务池内的任务发生变化的监听器；

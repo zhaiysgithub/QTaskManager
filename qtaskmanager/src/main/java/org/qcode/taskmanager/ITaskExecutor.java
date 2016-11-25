@@ -25,6 +25,12 @@ public interface ITaskExecutor<T> {
     void setTaskExecutorAbility(ITaskExecutorAbility<T> executorAbility);
 
     /***
+     * 设置在UI
+     * @param runOnUIThread
+     */
+    void setRunOnUIThread(boolean runOnUIThread);
+
+    /***
      * 开始执行
      */
     void startExecute();

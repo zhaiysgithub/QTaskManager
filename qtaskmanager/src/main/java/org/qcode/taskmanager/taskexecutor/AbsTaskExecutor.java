@@ -4,6 +4,7 @@ import org.qcode.taskmanager.ITaskExecutor;
 import org.qcode.taskmanager.ITaskExecutorAbility;
 import org.qcode.taskmanager.ITaskManager;
 import org.qcode.taskmanager.base.utils.Logging;
+import org.qcode.taskmanager.base.utils.UITaskRunner;
 import org.qcode.taskmanager.entities.DuplicateTaskStrategy;
 import org.qcode.taskmanager.entities.TaskInfo;
 import org.qcode.taskmanager.taskpool.ITaskPool;
@@ -33,6 +34,12 @@ public abstract class AbsTaskExecutor<T> implements ITaskExecutor<T> {
     protected DuplicateTaskStrategy mDuplicateTaskStrategy
             = DuplicateTaskStrategy.KEEP_ALL;
 
+    //表示任务是否运行在UI线程
+    private boolean mRunOnUIThread = false;
+
+    //切换到UI线程执行任务时的锁
+    private Object mSwitchUIThreadRunningLock = new Object();
+
     public AbsTaskExecutor() {
         mTaskPool = new TaskPoolImpl<T>();
     }
@@ -49,6 +56,11 @@ public abstract class AbsTaskExecutor<T> implements ITaskExecutor<T> {
 
         //设置TaskComparator
         mTaskPool.setTaskComparator(mTaskExecutorHelper);
+    }
+
+    @Override
+    public void setRunOnUIThread(boolean runOnUIThread) {
+        mRunOnUIThread = runOnUIThread;
     }
 
     @Override
@@ -72,8 +84,30 @@ public abstract class AbsTaskExecutor<T> implements ITaskExecutor<T> {
         public void run() {
             while (isRunning) {
                 try {
-                    TaskInfo<T> task = mTaskPool.popTask();
-                    executeTask(task);
+                    final TaskInfo<T> task = mTaskPool.popTask();
+                    if(mRunOnUIThread) {
+                        //切换到UI线程执行任务
+                        UITaskRunner.getHandler().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                executeTask(task);
+
+                                //UI线程任务执行触发后开始唤醒下一个任务执行
+                                synchronized (mSwitchUIThreadRunningLock) {
+                                    mSwitchUIThreadRunningLock.notifyAll();
+                                }
+                            }
+                        });
+
+                        //等待UI线程任务执行触发后在唤醒进行下一个任务执行
+                        synchronized (mSwitchUIThreadRunningLock) {
+                            mSwitchUIThreadRunningLock.wait();
+                        }
+
+                    } else {
+                        //在当前线程执行任务
+                        executeTask(task);
+                    }
                 } catch (Exception ex) {
                     Logging.d(TAG, "exception happened", ex);
                 }
