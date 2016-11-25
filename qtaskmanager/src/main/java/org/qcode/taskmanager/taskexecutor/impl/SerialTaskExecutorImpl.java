@@ -1,8 +1,9 @@
 package org.qcode.taskmanager.taskexecutor.impl;
 
+import org.qcode.taskmanager.base.utils.LockWaitNotifyHelper;
+import org.qcode.taskmanager.base.utils.Logging;
 import org.qcode.taskmanager.base.utils.Utils;
 import org.qcode.taskmanager.entities.TaskInfo;
-import org.qcode.taskmanager.base.utils.Logging;
 import org.qcode.taskmanager.taskexecutor.AbsTaskExecutor;
 
 /**
@@ -13,20 +14,15 @@ import org.qcode.taskmanager.taskexecutor.AbsTaskExecutor;
 public class SerialTaskExecutorImpl<T> extends AbsTaskExecutor<T> {
 
     private static final String TAG = "SerialTaskExecutorImpl";
-    //任务开始执行
-    private static final int STATE_BEGIN = 0;
-    //任务被锁定
-    private static final int STATE_LOCKED = 1;
-    //任务执行结束
-    private static final int STATE_FINISH = 2;
 
-    //当前的任务状态
-    private volatile int mTaskState = STATE_BEGIN;
-
-    private Object mLock = new Object();
+    private LockWaitNotifyHelper mLockWaitNotifyHelper;
 
     //当前执行的任务
     private T mCurrentRunningTask;
+
+    public SerialTaskExecutorImpl() {
+        mLockWaitNotifyHelper = new LockWaitNotifyHelper(new Object());
+    }
 
     @Override
     protected void executeTask(TaskInfo<T> task) {
@@ -36,7 +32,7 @@ public class SerialTaskExecutorImpl<T> extends AbsTaskExecutor<T> {
 
         Utils.assertNotNull(mTaskExecutorHelper, "ITaskExecutorAbility is not set");
 
-        mTaskState = STATE_BEGIN;
+        mLockWaitNotifyHelper.beginLockAction();
 
         //设置当前执行的任务
         mCurrentRunningTask = task.getTask();
@@ -44,17 +40,7 @@ public class SerialTaskExecutorImpl<T> extends AbsTaskExecutor<T> {
         //执行任务
         mTaskExecutorHelper.executeTask(mCurrentRunningTask);
 
-        //等待任务执行结束
-        synchronized (mLock) {
-            if(mTaskState == STATE_BEGIN) {
-                try {
-                    mTaskState = STATE_LOCKED;
-                    mLock.wait();
-                } catch (InterruptedException e) {
-                    //todo
-                }
-            }
-        }
+        mLockWaitNotifyHelper.waitForSignal();
     }
 
     @Override
@@ -70,18 +56,6 @@ public class SerialTaskExecutorImpl<T> extends AbsTaskExecutor<T> {
             return;
         }
 
-        synchronized (mLock) {
-            if(mTaskState == STATE_BEGIN) {
-                //already finished, not need to wait lock
-                //如果任务执行完成后，发现当前状态还是STATE_BEGIN，
-                //则不需要在任务执行完成后等待了
-                mTaskState = STATE_FINISH;
-            } else if(mTaskState == STATE_LOCKED) {
-                //正在等待任务执行结束，此时应解锁执行下一个任务
-                mLock.notify();
-            } else {
-                //do nothing
-            }
-        }
+        mLockWaitNotifyHelper.signalWaiter();
     }
 }

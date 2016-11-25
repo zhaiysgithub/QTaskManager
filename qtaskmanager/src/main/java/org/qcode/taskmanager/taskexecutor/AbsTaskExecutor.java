@@ -3,6 +3,7 @@ package org.qcode.taskmanager.taskexecutor;
 import org.qcode.taskmanager.ITaskExecutor;
 import org.qcode.taskmanager.ITaskExecutorAbility;
 import org.qcode.taskmanager.ITaskManager;
+import org.qcode.taskmanager.base.utils.LockWaitNotifyHelper;
 import org.qcode.taskmanager.base.utils.Logging;
 import org.qcode.taskmanager.base.utils.UITaskRunner;
 import org.qcode.taskmanager.entities.DuplicateTaskStrategy;
@@ -37,11 +38,12 @@ public abstract class AbsTaskExecutor<T> implements ITaskExecutor<T> {
     //表示任务是否运行在UI线程
     private boolean mRunOnUIThread = false;
 
-    //切换到UI线程执行任务时的锁
-    private Object mSwitchUIThreadRunningLock = new Object();
+    //切换到UI线程执行任务时锁的wait/notify信号帮助类，防止死锁
+    private LockWaitNotifyHelper mLockWaitNotifyHelper;
 
     public AbsTaskExecutor() {
         mTaskPool = new TaskPoolImpl<T>();
+        mLockWaitNotifyHelper = new LockWaitNotifyHelper(new Object());
     }
 
     @Override
@@ -84,25 +86,9 @@ public abstract class AbsTaskExecutor<T> implements ITaskExecutor<T> {
         public void run() {
             while (isRunning) {
                 try {
-                    final TaskInfo<T> task = mTaskPool.popTask();
+                    TaskInfo<T> task = mTaskPool.popTask();
                     if(mRunOnUIThread) {
-                        //切换到UI线程执行任务
-                        UITaskRunner.getHandler().post(new Runnable() {
-                            @Override
-                            public void run() {
-                                executeTask(task);
-
-                                //UI线程任务执行触发后开始唤醒下一个任务执行
-                                synchronized (mSwitchUIThreadRunningLock) {
-                                    mSwitchUIThreadRunningLock.notifyAll();
-                                }
-                            }
-                        });
-
-                        //等待UI线程任务执行触发后在唤醒进行下一个任务执行
-                        synchronized (mSwitchUIThreadRunningLock) {
-                            mSwitchUIThreadRunningLock.wait();
-                        }
+                        executeTaskInUIThread(task);
 
                     } else {
                         //在当前线程执行任务
@@ -114,6 +100,25 @@ public abstract class AbsTaskExecutor<T> implements ITaskExecutor<T> {
             }
         }
     };
+
+
+    private void executeTaskInUIThread(final TaskInfo<T> task) {
+        mLockWaitNotifyHelper.beginLockAction();
+
+        //切换到UI线程执行任务
+        UITaskRunner.getHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                executeTask(task);
+
+                //UI线程任务执行触发后开始唤醒下一个任务执行
+                mLockWaitNotifyHelper.signalWaiter();
+            }
+        });
+
+        //等待UI线程任务执行触发后在唤醒进行下一个任务执行
+        mLockWaitNotifyHelper.waitForSignal();
+    }
 
     /***
      * 执行任务
